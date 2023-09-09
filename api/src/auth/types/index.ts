@@ -4,7 +4,7 @@ export type CreateUser = {
   password: string;
 };
 
-export type ExistsUser = {
+export type LoginUser = {
   email: string;
   password: string;
 };
