@@ -7,7 +7,7 @@ import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './utils/guards/auth.guard';
 
 @Module({
   imports: [
