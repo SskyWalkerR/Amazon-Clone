@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { PublicRoute } from 'src/decorators/publicRoute.decorator';
+import { PublicRoute } from 'src/utils/decorators/publicRoute.decorator';
 import { LoginUserDTO, NewUserDTO } from 'src/user/dto/newUser.dto';
 import { UserDetails } from 'src/user/types';
 import { AuthService } from './auth.service';
