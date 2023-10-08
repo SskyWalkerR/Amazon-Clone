@@ -12,18 +12,19 @@ const registerSchema = zode
     message: "Passwords do not match",
   });
 
-export type RegisterType = zode.infer<typeof registerSchema>;
+type RegisterType = zode.infer<typeof registerSchema>;
 
 const signinSchema = zode.object({
   email: zode.string().email().min(1, { message: "Invalid email address" }),
   password: zode.string().min(1, "Password is required"),
 });
 
-export type SigninType = zode.infer<typeof signinSchema>;
+type SigninType = zode.infer<typeof signinSchema>;
 
 class FormValidator {
   static registerSchema = registerSchema;
   static signinSchema = signinSchema;
 }
 
-export default FormValidator;
+export { FormValidator, registerSchema, signinSchema };
+export type { RegisterType, SigninType };

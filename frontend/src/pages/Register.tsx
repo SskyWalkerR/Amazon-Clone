@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-import FormValidator, { RegisterType } from "../validator/form";
 import { Link } from "react-router-dom";
+import { FormValidator, RegisterType } from "../validator/form";
 
 const Register = () => {
   const {
