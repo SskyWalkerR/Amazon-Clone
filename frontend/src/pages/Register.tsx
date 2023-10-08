@@ -30,7 +30,7 @@ const Register = () => {
           </Typography>
           <Stack spacing={2} marginBottom={1}>
             <Controller
-              name="fullName"
+              name="name"
               control={control}
               render={({ field }) => (
                 <TextField
@@ -43,7 +43,7 @@ const Register = () => {
                 />
               )}
             />
-            <Typography color="error">{errors.fullName?.message}</Typography>
+            <Typography color="error">{errors.name?.message}</Typography>
             <Controller
               name="email"
               control={control}

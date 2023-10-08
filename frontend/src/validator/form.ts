@@ -2,7 +2,7 @@ import * as zode from "zod";
 
 const registerSchema = zode
   .object({
-    fullName: zode.string().min(1, { message: "This field is required" }),
+    name: zode.string().min(1, { message: "This field is required" }),
     email: zode.string().email().min(1, { message: "Invalid email address" }),
     password: zode.string().min(1, "Password is required"),
     confirmPassword: zode.string().min(1, "Confirm Password"),
