@@ -1,11 +1,14 @@
-import { ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
-import { theme } from "./shared/utils/theme";
+import CssBaseline from "@mui/material/CssBaseline";
+import { AppThemeProvider } from "./context/theme";
+import AppRoutes from "./routes";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <ThemeProvider theme={theme}>HI</ThemeProvider>;
+  return (
+    <AppThemeProvider>
+      <CssBaseline />
+      <AppRoutes />
+    </AppThemeProvider>
+  );
 }
 
 export default App;
