@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
 import { Jwt, NewUser, User } from "../../types/auth";
 import authService from "./services/auth.services";
 
@@ -30,7 +31,13 @@ export const register = createAsyncThunk("auth/register", async (newUser: NewUse
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    reset: (state) => {
+      state.isLoading = false;
+      state.isSuccess = false;
+      state.isError = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
@@ -50,6 +57,8 @@ export const authSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-// export const { increment, decrement, incrementByAmount } = authSlice.actions;
+export const { reset } = authSlice.actions;
+
+export const selectedUser = (state: RootState) => state.auth;
 
 export default authSlice.reducer;

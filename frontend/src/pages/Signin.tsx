@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import AuthLayout from "../layouts/AuthLayout";
+import AuthLayout from "../components/layouts/AuthLayout";
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
