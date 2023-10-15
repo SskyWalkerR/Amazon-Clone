@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import Lazy from "./components/Lazy";
-import PrivateRoute from "./utils/PrivateRoute";
+import { PrivateOutlet } from "./utils/PrivateOutlet";
 
 // Lazy loading pages
 const Home = lazy(() => import("./pages/Home"));
@@ -11,7 +11,7 @@ const Signin = lazy(() => import("./pages/Signin"));
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route element={<PrivateRoute />}>
+      <Route element={<PrivateOutlet />}>
         <Route path="/" element={<Lazy Page={Home} />} />
       </Route>
       <Route path="auth">
