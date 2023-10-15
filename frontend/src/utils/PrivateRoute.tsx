@@ -9,6 +9,7 @@ const PrivateRoute = () => {
   useEffect(() => {
     if (!jwt || !jwt.access_token) {
       navigate("/auth/signin");
+      console.log("jh");
     }
   }, [jwt]);
 

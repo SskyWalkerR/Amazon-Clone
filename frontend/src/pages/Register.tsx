@@ -8,13 +8,15 @@ import Stack from "@mui/material/Stack";
 import { Link, useNavigate } from "react-router-dom";
 import { FormValidator, RegisterType } from "../validator/form";
 import { useAppDispatch, useAppSelector } from "../hooks/store";
-import { register, reset as resetAsyncState } from "../app/Features/Auth/authSlice";
 import { useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useRegisterMutation } from "../app/services/Auth/authServices";
+import { reset as resetAsyncState } from "../app/Features/Auth/authSlice";
 
 const Register = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, isSuccess, user } = useAppSelector((state) => state.auth);
+  const [register, { isLoading, isSuccess }] = useRegisterMutation();
+  const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const {
     control,
@@ -25,9 +27,9 @@ const Register = () => {
     resolver: zodResolver(FormValidator.registerSchema),
   });
 
-  const onSubmit = (values: RegisterType) => {
+  const onSubmit = async (values: RegisterType) => {
     const { confirmPassword, ...newUser } = values;
-    dispatch(register(newUser));
+    await register(newUser).unwrap();
   };
 
   useEffect(() => {

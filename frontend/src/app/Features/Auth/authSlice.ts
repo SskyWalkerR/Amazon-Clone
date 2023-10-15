@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { Jwt, LoginUser, NewUser, User } from "../../../types/auth";
-import authService from "./services/auth.services";
+import { Jwt, User } from "../../../types/auth";
+import { authApi } from "../../services/Auth/authServices";
 
 const storedUser: string | null = localStorage.getItem("user");
 const user: User | null = !!storedUser ? JSON.parse(storedUser) : null;
@@ -26,34 +26,6 @@ const initialState: AuthState = {
   isAuthenticated: false,
 };
 
-export const register = createAsyncThunk("auth/register", async (newUser: NewUser, thunkAPI) => {
-  try {
-    return await authService.register(newUser);
-  } catch (error) {
-    return thunkAPI.rejectWithValue("Unable to register user");
-  }
-});
-
-export const login = createAsyncThunk("auth/login", async (user: LoginUser, thunkAPI) => {
-  try {
-    return await authService.login(user);
-  } catch (error) {
-    return thunkAPI.rejectWithValue("Unable to login");
-  }
-});
-
-export const logout = createAsyncThunk("auth/logout", async () => {
-  return authService.logout();
-});
-
-export const verifyJwt = createAsyncThunk("auth/verify-jwt", async (jwt: string, thunkAPI) => {
-  try {
-    return await authService.verifyJwt(jwt);
-  } catch (error) {
-    return thunkAPI.rejectWithValue("Unable to verify");
-  }
-});
-
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -63,57 +35,66 @@ export const authSlice = createSlice({
       state.isSuccess = false;
       state.isError = false;
     },
+    logout: (state) => {
+      state.user = null;
+      state.jwt = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("user");
+      localStorage.removeItem("jwt");
+    },
   },
   extraReducers: (builder) => {
     builder
       // Register
-      .addCase(register.pending, (state) => {
+      .addMatcher(authApi.endpoints.register.matchPending, (state) => {
         state.isLoading = true;
       })
-      .addCase(register.fulfilled, (state, action) => {
+      .addMatcher(authApi.endpoints.register.matchFulfilled, (state) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload;
       })
-      .addCase(register.rejected, (state) => {
+      .addMatcher(authApi.endpoints.register.matchRejected, (state) => {
         state.isLoading = false;
         state.isError = true;
         state.user = null;
       })
       // Login
-      .addCase(login.pending, (state) => {
+      .addMatcher(authApi.endpoints.login.matchPending, (state) => {
         state.isLoading = true;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addMatcher(authApi.endpoints.login.matchFulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.jwt = action.payload;
+        state.jwt = payload;
         state.isAuthenticated = true;
       })
-      .addCase(login.rejected, (state) => {
+      .addMatcher(authApi.endpoints.login.matchRejected, (state) => {
         state.isLoading = false;
         state.isError = true;
         state.user = null;
-        state.isAuthenticated = false;
-      })
-      // Logout
-      .addCase(logout.fulfilled, (state) => {
-        state.user = null;
-        state.jwt = null;
         state.isAuthenticated = false;
       })
       // Verify JWT token
-      .addCase(verifyJwt.pending, (state) => {
+      .addMatcher(authApi.endpoints.verifyJwt.matchPending, (state) => {
         state.isLoading = true;
       })
-      .addCase(verifyJwt.fulfilled, (state, action) => {
+      .addMatcher(authApi.endpoints.verifyJwt.matchFulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.isAuthenticated = action.payload;
+        state.isAuthenticated = payload;
       })
-      .addCase(verifyJwt.rejected, (state) => {
+      .addMatcher(authApi.endpoints.verifyJwt.matchRejected, (state) => {
         state.isLoading = false;
         state.isError = true;
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      // Me
+      .addMatcher(authApi.endpoints.me.matchFulfilled, (state, { payload }) => {
+        state.user = payload;
+        state.isAuthenticated = true;
+      })
+      .addMatcher(authApi.endpoints.me.matchRejected, (state) => {
         state.user = null;
         state.isAuthenticated = false;
       });
@@ -121,8 +102,8 @@ export const authSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { reset } = authSlice.actions;
+export const { reset, logout } = authSlice.actions;
 
-export const selectedUser = (state: RootState) => state.auth;
+export const selectCurrentUser = (state: RootState) => state.auth.user;
 
 export default authSlice.reducer;

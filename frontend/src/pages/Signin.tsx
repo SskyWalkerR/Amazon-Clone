@@ -9,13 +9,16 @@ import Stack from "@mui/material/Stack";
 import { Link, useNavigate } from "react-router-dom";
 import { FormValidator, SigninType } from "../validator/form";
 import { useAppDispatch, useAppSelector } from "../hooks/store";
-import { login, reset as resetAsyncState } from "../app/Features/Auth/authSlice";
 import { useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useLoginMutation, useMeMutation } from "../app/services/Auth/authServices";
+import { reset as resetAsyncState } from "../app/Features/Auth/authSlice";
 
 const Signin = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, isSuccess, isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const [login, { isLoading: isLoginLoading, isSuccess: isLoginSuccess }] = useLoginMutation();
+  const [getMe, {}] = useMeMutation();
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const {
@@ -27,16 +30,19 @@ const Signin = () => {
     resolver: zodResolver(FormValidator.signinSchema),
   });
 
-  const onSubmit = (values: SigninType) => {
-    dispatch(login(values));
+  const onSubmit = async (values: SigninType) => {
+    const res = await login(values).unwrap();
+    if (res) {
+      await getMe();
+    }
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isLoginSuccess) {
       dispatch(resetAsyncState());
       reset();
     }
-  }, [isLoading]);
+  }, [isLoginSuccess]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -50,7 +56,7 @@ const Signin = () => {
     }
   }, [user, navigate]);
 
-  if (isLoading) return <CircularProgress color="warning" />;
+  if (isLoginLoading) return <CircularProgress color="warning" />;
 
   return (
     <AuthLayout>
