@@ -13,7 +13,7 @@ interface AppThemeProviderProps {
 const AppThemeContext = createContext<AppThemeContextType | undefined>(undefined);
 
 const AppThemeProvider: FC<AppThemeProviderProps> = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
+  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("dark");
 
   const toggleTheme = () =>
     useMemo(() => setCurrentTheme((prevMode) => (prevMode === "light" ? "dark" : "light")), []);

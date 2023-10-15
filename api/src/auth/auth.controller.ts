@@ -20,4 +20,11 @@ export class AuthController {
   login(@Body() user: LoginUserDTO): Promise<{ access_token: string } | null> {
     return this.authService.login(user);
   }
+
+  @PublicRoute()
+  @Post('verify-jwt')
+  @HttpCode(HttpStatus.OK)
+  verufyJwt(@Body() payload: { jwt: string }) {
+    return this.authService.verifyJwt(payload.jwt);
+  }
 }

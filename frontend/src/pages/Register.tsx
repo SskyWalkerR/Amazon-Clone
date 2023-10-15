@@ -1,26 +1,52 @@
 import Typography from "@mui/material/Typography";
-import AuthLayout from "../layouts/AuthLayout";
-
+import AuthLayout from "../components/layouts/AuthLayout";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FormValidator, RegisterType } from "../validator/form";
+import { useAppDispatch, useAppSelector } from "../hooks/store";
+import { register, reset as resetAsyncState } from "../app/Features/Auth/authSlice";
+import { useEffect } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Register = () => {
+  const dispatch = useAppDispatch();
+  const { isLoading, isSuccess, user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<RegisterType>({
     resolver: zodResolver(FormValidator.registerSchema),
   });
 
   const onSubmit = (values: RegisterType) => {
-    console.log(values);
+    const { confirmPassword, ...newUser } = values;
+    dispatch(register(newUser));
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(resetAsyncState());
+      reset();
+      navigate("/auth/signin");
+    }
+  }, [isSuccess]);
+
+  // If the user is already authenticated, redirect back to the home page
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  if (isLoading) return <CircularProgress color="warning" />;
+
   return (
     <AuthLayout>
       <Stack padding={3} width={{ xs: "100%", md: "50%" }}>
@@ -30,7 +56,7 @@ const Register = () => {
           </Typography>
           <Stack spacing={2} marginBottom={1}>
             <Controller
-              name="fullName"
+              name="name"
               control={control}
               render={({ field }) => (
                 <TextField
@@ -43,7 +69,7 @@ const Register = () => {
                 />
               )}
             />
-            <Typography color="error">{errors.fullName?.message}</Typography>
+            <Typography color="error">{errors.name?.message}</Typography>
             <Controller
               name="email"
               control={control}
