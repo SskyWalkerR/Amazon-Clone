@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Jwt, User } from "../../../types/auth";
+import { Jwt, User } from "../../models/auth";
 import { authApi } from "../../services/Auth/authServices";
 import { RootState } from "../../store";
 
