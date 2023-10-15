@@ -1,22 +1,20 @@
-import Typography from "@mui/material/Typography";
-import AuthLayout from "../components/layouts/AuthLayout";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
-import { Link, useNavigate } from "react-router-dom";
-import { FormValidator, RegisterType } from "../validator/form";
-import { useAppDispatch, useAppSelector } from "../hooks/store";
-import { useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+
 import { useRegisterMutation } from "../app/services/Auth/authServices";
-import { reset as resetAsyncState } from "../app/Features/Auth/authSlice";
+import AuthLayout from "../components/layouts/AuthLayout";
+import { FormValidator, RegisterType } from "../validator/form";
 
 const Register = () => {
-  const dispatch = useAppDispatch();
   const [register, { isLoading, isSuccess }] = useRegisterMutation();
-  const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const {
     control,
@@ -34,18 +32,17 @@ const Register = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      dispatch(resetAsyncState());
       reset();
       navigate("/auth/signin");
     }
   }, [isSuccess]);
 
-  // If the user is already authenticated, redirect back to the home page
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
+  // // If the user is already authenticated, redirect back to the home page
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate("/");
+  //   }
+  // }, [user, navigate]);
 
   if (isLoading) return <CircularProgress color="warning" />;
 

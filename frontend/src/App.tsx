@@ -1,5 +1,7 @@
-import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter } from "react-router-dom";
+
+import CssBaseline from "@mui/material/CssBaseline";
+
 import { AppThemeProvider } from "./context/theme";
 import AppRoutes from "./routes";
 
