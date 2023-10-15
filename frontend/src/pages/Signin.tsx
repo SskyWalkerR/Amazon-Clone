@@ -1,25 +1,21 @@
-import Typography from "@mui/material/Typography";
-import AuthLayout from "../components/layouts/AuthLayout";
-
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
-import { Link, useNavigate } from "react-router-dom";
-import { FormValidator, SigninType } from "../validator/form";
-import { useAppDispatch, useAppSelector } from "../hooks/store";
-import { useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+
 import { useLoginMutation, useMeMutation } from "../app/services/Auth/authServices";
-import { reset as resetAsyncState } from "../app/Features/Auth/authSlice";
+import AuthLayout from "../components/layouts/AuthLayout";
+import { FormValidator, SigninType } from "../validator/form";
 
 const Signin = () => {
-  const dispatch = useAppDispatch();
-  const [login, { isLoading: isLoginLoading, isSuccess: isLoginSuccess }] = useLoginMutation();
+  const [login, { isLoading, isSuccess }] = useLoginMutation();
   const [getMe, {}] = useMeMutation();
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-  const navigate = useNavigate();
 
   const {
     control,
@@ -38,25 +34,12 @@ const Signin = () => {
   };
 
   useEffect(() => {
-    if (isLoginSuccess) {
-      dispatch(resetAsyncState());
+    if (isSuccess) {
       reset();
     }
-  }, [isLoginSuccess]);
+  }, [isSuccess]);
 
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    navigate("/");
-  }, [isAuthenticated]);
-
-  // If the user is already authenticated, redirect back to the home page
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
-
-  if (isLoginLoading) return <CircularProgress color="warning" />;
+  if (isLoading) return <CircularProgress color="warning" />;
 
   return (
     <AuthLayout>

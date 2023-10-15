@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 import { Jwt, LoginUser, NewUser, User } from "../../../types/auth";
 import { BaseUrl } from "../../Features";
 import { RootState } from "../../store";
