@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserDetails } from 'src/user/types';
@@ -42,7 +42,11 @@ export class AuthService {
   async register(user: Readonly<CreateUser>): Promise<UserDetails | any> {
     const { email, name, password } = user;
     const isUserExist = await this.userService.findUserByEmail(email);
-    if (isUserExist) return 'User with this email is already exists';
+    if (isUserExist)
+      throw new HttpException(
+        'An account with that email already exists!',
+        HttpStatus.CONFLICT,
+      );
 
     const hashedPassword = await this.hashPassword(password);
     const newUser = await this.userService.createUser(
@@ -58,9 +62,19 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const { email, password } = userData;
     const user = await this.validateUser(email, password);
-    if (!user) return null;
+    if (!user)
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 
     const jwt = await this.jwtService.signAsync({ user });
     return { access_token: jwt };
+  }
+
+  async verifyJwt(jwt: string): Promise<{ exp: number }> {
+    try {
+      const { exp } = await this.jwtService.verifyAsync(jwt);
+      return { exp };
+    } catch (error) {
+      throw new HttpException('Invalid JWT', HttpStatus.UNAUTHORIZED);
+    }
   }
 }

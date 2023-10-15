@@ -4,7 +4,7 @@ type User = {
   email: string;
 };
 
-type Jwt = { token: string } | null;
+type Jwt = { access_token: string } | null;
 
 type DecodedJwt = {
   user: User;

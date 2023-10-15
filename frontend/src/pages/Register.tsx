@@ -8,13 +8,13 @@ import Stack from "@mui/material/Stack";
 import { Link, useNavigate } from "react-router-dom";
 import { FormValidator, RegisterType } from "../validator/form";
 import { useAppDispatch, useAppSelector } from "../hooks/store";
-import { register, reset as resetAsyncState } from "../features/auth/authSlice";
+import { register, reset as resetAsyncState } from "../app/Features/Auth/authSlice";
 import { useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Register = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, isSuccess } = useAppSelector((state) => state.auth);
+  const { isLoading, isSuccess, user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const {
     control,
@@ -37,6 +37,13 @@ const Register = () => {
       navigate("/auth/signin");
     }
   }, [isSuccess]);
+
+  // If the user is already authenticated, redirect back to the home page
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   if (isLoading) return <CircularProgress color="warning" />;
 

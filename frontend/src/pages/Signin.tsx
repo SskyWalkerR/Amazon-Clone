@@ -6,21 +6,52 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FormValidator, SigninType } from "../validator/form";
+import { useAppDispatch, useAppSelector } from "../hooks/store";
+import { login, reset as resetAsyncState } from "../app/Features/Auth/authSlice";
+import { useEffect } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Signin = () => {
+  const dispatch = useAppDispatch();
+  const { isLoading, isSuccess, isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<SigninType>({
     resolver: zodResolver(FormValidator.signinSchema),
   });
 
   const onSubmit = (values: SigninType) => {
-    console.log(values);
+    dispatch(login(values));
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(resetAsyncState());
+      reset();
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    navigate("/");
+  }, [isAuthenticated]);
+
+  // If the user is already authenticated, redirect back to the home page
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  if (isLoading) return <CircularProgress color="warning" />;
+
   return (
     <AuthLayout>
       <Stack padding={3} width={{ xs: "100%", md: "50%" }}>
