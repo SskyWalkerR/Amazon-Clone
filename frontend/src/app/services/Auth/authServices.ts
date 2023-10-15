@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import jwtDecode from "jwt-decode";
-import { DecodedJwt, Jwt, LoginUser, NewUser, User } from "../../../types/auth";
+import { Jwt, LoginUser, NewUser, User } from "../../../types/auth";
 import { BaseUrl } from "../../Features";
 import { RootState } from "../../store";
 
