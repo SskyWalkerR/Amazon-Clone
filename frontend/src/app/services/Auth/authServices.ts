@@ -1,21 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-import { BaseUrl } from "../../Features";
+import { globalApi } from "../../services";
 import { Jwt, LoginUser, NewUser, User } from "../../models/auth";
-import { RootState } from "../../store";
 
-export const authApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: BaseUrl,
-    prepareHeaders: (headers, { getState }) => {
-      // By default, if we have a token in the store, let's use that for authenticated requests
-      const token = (getState() as RootState).auth.jwt?.access_token;
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+export const authApi = globalApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<User, NewUser>({
       query: (credentials) => ({
@@ -37,7 +23,7 @@ export const authApi = createApi({
         return response;
       },
     }),
-    verifyJwt: builder.mutation<any, { jwt: string }>({
+    verifyJwt: builder.mutation<boolean, { jwt: string }>({
       query: (credentials) => ({
         url: "/auth/verify-jwt",
         method: "POST",
